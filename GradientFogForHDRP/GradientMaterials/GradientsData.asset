@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec9b0451426cd340b9d8eee630fbf7f, type: 3}
+  m_Name: GradientsData
+  m_EditorClassIdentifier: 
+  Data:
+  - GradientName: Pouet
+    GradientMaterial: {fileID: 2100000, guid: a3107522614c10b4e9c79561ff4d15b9, type: 2}
