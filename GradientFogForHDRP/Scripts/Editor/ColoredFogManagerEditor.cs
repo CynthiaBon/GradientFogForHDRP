@@ -5,10 +5,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 
-[CustomEditor(typeof(GradientFogManager))]
-public class GradientFogManagerEditor : Editor
+[CustomEditor(typeof(ColoredFogManager))]
+public class ColoredFogManagerEditor : Editor
 {
-    private GradientFogManager _self = null;
+    private ColoredFogManager _self = null;
 
     //Editor Variable
     private static string _gradientName = null;
@@ -21,10 +21,10 @@ public class GradientFogManagerEditor : Editor
 
     private void OnEnable()
     {
-        _self = target as GradientFogManager;
+        _self = target as ColoredFogManager;
 
         _fogGradient = new Gradient();
-        _gradientData = AssetDatabase.LoadAssetAtPath("Assets/GradientFogForHDRP/GradientMaterials/GradientsData.asset", typeof(GradientsData)) as GradientsData;
+        _gradientData = AssetDatabase.LoadAssetAtPath("Assets/ColoredFog/GradientMaterials/GradientsData.asset", typeof(GradientsData)) as GradientsData;
     }
 
     public override void OnInspectorGUI()
@@ -54,15 +54,21 @@ public class GradientFogManagerEditor : Editor
 
     private void CreateGradientMaterial()
     {
-        string gradientTexturePath = "/GradientFogForHDRP/GradientMaterials/Textures/" + "T_" + _gradientName + ".png";
-        string gradientMaterialPath = "Assets/GradientFogForHDRP/GradientMaterials/Materials/" + "M_" + _gradientName + ".mat";
+        string gradientTexturePath = "/ColoredFog/GradientMaterials/Textures/" + "T_" + _gradientName + ".png";
+        string gradientMaterialPath = "Assets/ColoredFog/GradientMaterials/Materials/" + "M_" + _gradientName + ".mat";
 
         Texture2D gradientTexture = GetTextureFromGradient();
+
+        if (!Directory.Exists(Application.dataPath + "/ColoredFog/GradientMaterials/Textures"))
+            Directory.CreateDirectory(Application.dataPath + "/ColoredFog/GradientMaterials/Textures");
         File.WriteAllBytes(Application.dataPath + gradientTexturePath, gradientTexture.EncodeToPNG());
 
         if (!_gradientData.Contains(_gradientName))
         {
-            Material newGradientMaterial = new Material(Shader.Find("Renderers/GradientFog"));
+            Material newGradientMaterial = new Material(Shader.Find("Renderers/ColoredFog"));
+
+            if (!Directory.Exists(Application.dataPath + "/ColoredFog/GradientMaterials/Materials"))
+                Directory.CreateDirectory(Application.dataPath + "/ColoredFog/GradientMaterials/Materials");
             AssetDatabase.CreateAsset(newGradientMaterial, gradientMaterialPath);
         }
 
@@ -110,8 +116,8 @@ public class GradientFogManagerEditor : Editor
 
     private void ChangeUsedGradient()
     {
-        GUILayout.Label(_self.GetCurrentFogMaterial() != null ? "Current fog gradient: " + _self.GetCurrentFogMaterial().name : "No gradient selected");
-        _usedGradientName = EditorGUILayout.TextField("Gradient to use", _usedGradientName);
+        GUILayout.Label(_self.GetCurrentFogMaterial() != null ? "Current fog material: " + _self.GetCurrentFogMaterial().name : "No material selected");
+        _usedGradientName = EditorGUILayout.TextField("Gradient name to use", _usedGradientName);
         if (GUILayout.Button("Change gradient"))
         {
             _self.ChangeGradient(_usedGradientName);
@@ -128,10 +134,13 @@ public class GradientFogManagerEditor : Editor
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true, GUILayout.ExpandHeight(true));
         for (int i = 0; i < _gradientData.Data.Count; i++)
         {
-            EditorGUILayout.BeginHorizontal();
-            _gradientData.Data[i].GradientName = EditorGUILayout.TextField(_gradientData.Data[i].GradientName);
-            GUILayout.Label(_gradientData.Data[i].GradientMaterial.GetTexture("_FogGradient"));
-            EditorGUILayout.EndHorizontal();
+            if (_gradientData.Data[i].GradientMaterial != null)
+            {
+                EditorGUILayout.BeginHorizontal();
+                _gradientData.Data[i].GradientName = EditorGUILayout.TextField(_gradientData.Data[i].GradientName);
+                GUILayout.Label(_gradientData.Data[i].GradientMaterial.GetTexture("_FogGradient"));
+                EditorGUILayout.EndHorizontal();
+            }
         }
         GUILayout.EndScrollView();
         GUILayout.EndVertical();
@@ -149,7 +158,6 @@ public class GradientFogManagerEditor : Editor
     }
 
     #endregion Data
-
     private void DrawLine()
     {
         GUILayout.Label("");

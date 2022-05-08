@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec9b0451426cd340b9d8eee630fbf7f, type: 3}
   m_Name: GradientsData
   m_EditorClassIdentifier: 
-  Data:
-  - GradientName: Pouet
-    GradientMaterial: {fileID: 2100000, guid: a3107522614c10b4e9c79561ff4d15b9, type: 2}
+  Data: []
